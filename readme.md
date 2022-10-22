@@ -1,0 +1,3 @@
+# Pinecone.io Client
+
+Readme coming soon...
