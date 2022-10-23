@@ -1,4 +1,5 @@
-import { PineconeClient } from '../src/fetch-polyfill/index';
+import 'cross-fetch/polyfill';
+import { PineconeClient } from '../src/index';
 import type { Metadata } from './e2e-tests';
 import { NAMESPACE, e2eTests } from './e2e-tests';
 
