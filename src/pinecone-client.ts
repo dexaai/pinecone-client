@@ -173,16 +173,18 @@ export class PineconeClient<Metadata extends RootMetadata> {
    * The Upsert operation writes vectors into a namespace. If a new value is
    * upserted for an existing vector id, it will overwrite the previous value.
    * @param params.vectors The vectors to upsert.
+   * @param params.batchSize The number of vectors to upsert in each batch.
    * @note This will automatically chunk the requests into batches of 1000 vectors.
    * @see https://www.pinecone.io/docs/api/operation/upsert/
    */
   async upsert(params: {
     vectors: SetRequired<Vector<Metadata>, 'metadata'>[];
+    batchSize?: number;
   }): Promise<void> {
-    // Don't upsert more than 1,000 vectors in a single request
-    const chunkSize = 1000;
-    for (let i = 0; i < params.vectors.length; i += chunkSize) {
-      const vectors = params.vectors.slice(i, i + chunkSize);
+    // Don't upsert more than `params.batchSize` vectors in a single request
+    const batchSize = params.batchSize || 50;
+    for (let i = 0; i < params.vectors.length; i += batchSize) {
+      const vectors = params.vectors.slice(i, i + batchSize);
       const vectorsWithoutMetadataNulls = vectors.map(removeNullValues);
       await this.api
         .post('vectors/upsert', {
