@@ -65,7 +65,7 @@ export class PineconeClient<Metadata extends RootMetadata> {
    * @param params.ids The ids of the vectors to delete.
    * @param params.deleteAll Deletes all vectors in the index if true.
    * @param params.filter Metadata filter to apply to the delete.
-   * @see https://www.pinecone.io/docs/api/operation/delete/
+   * @see https://docs.pinecone.io/reference/delete/
    */
   async delete(params: {
     ids?: string[];
@@ -87,7 +87,7 @@ export class PineconeClient<Metadata extends RootMetadata> {
    * contents, including the vector count per namespace, the number of
    * dimensions, and the index fullness.
    * @params params.filter Metadata filter to apply to the describe.
-   * @see https://www.pinecone.io/docs/api/operation/describe_index_stats/
+   * @see https://docs.pinecone.io/reference/describe_index_stats_post
    */
   async describeIndexStats(params?: { filter?: Filter<Metadata> }): Promise<{
     namespaces: { [namespace: string]: { vectorCount: number } };
@@ -106,7 +106,7 @@ export class PineconeClient<Metadata extends RootMetadata> {
    * The Fetch operation looks up and returns vectors, by ID, from a single
    * namespace. The returned vectors include the vector data and/or metadata.
    * @param params.ids The ids of the vectors to fetch.
-   * @see https://www.pinecone.io/docs/api/operation/fetch/
+   * @see https://docs.pinecone.io/reference/fetch
    */
   async fetch(params: { ids: string[] }): Promise<{
     namespace: string;
@@ -129,7 +129,7 @@ export class PineconeClient<Metadata extends RootMetadata> {
    * @param params.includeMetadata Whether to include metadata in the results.
    * @param params.includeValues Whether to include vector values in the results.
    * @note One of `vector` or `id` is required.
-   * @see https://www.pinecone.io/docs/api/operation/query/
+   * @see https://docs.pinecone.io/reference/query
    */
   async query<Params extends QueryParams<Metadata>>(
     params: Params
@@ -152,7 +152,7 @@ export class PineconeClient<Metadata extends RootMetadata> {
    * @param params.id The id of the vector to update.
    * @param params.values The new vector values.
    * @param params.setMetadata Metadata to set for the vector.
-   * @see https://www.pinecone.io/docs/api/operation/update/
+   * @see https://docs.pinecone.io/reference/update
    */
   async update(params: {
     id: string;
@@ -175,7 +175,7 @@ export class PineconeClient<Metadata extends RootMetadata> {
    * @param params.vectors The vectors to upsert.
    * @param params.batchSize The number of vectors to upsert in each batch.
    * @note This will automatically chunk the requests into batches of 1000 vectors.
-   * @see https://www.pinecone.io/docs/api/operation/upsert/
+   * @see https://docs.pinecone.io/reference/upsert
    */
   async upsert(params: {
     vectors: SetRequired<Vector<Metadata>, 'metadata'>[];
