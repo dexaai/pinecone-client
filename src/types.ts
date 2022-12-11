@@ -53,6 +53,8 @@ export type QueryParams<Metadata extends RootMetadata> = RequireExactlyOne<
     includeValues?: boolean;
     vector?: number[];
     id?: string;
+    // Prevent typo of filters instead of filter
+    filters?: never;
   },
   // Queries must have either a vector or an id and cannot have both.
   'vector' | 'id'
