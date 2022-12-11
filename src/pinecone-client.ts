@@ -17,6 +17,7 @@ type ConfigOpts = {
   apiKey?: string;
   /**
    * The HTTP endpoint for the Pinecone index.
+   * Use an empty string if there is no baseUrl yet because the index is being created.
    * @see https://www.pinecone.io/docs/manage-data/#specify-an-index-endpoint
    */
   baseUrl?: string;
