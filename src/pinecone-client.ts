@@ -7,7 +7,7 @@ import type {
   Vector,
   QueryResults,
 } from './types';
-import type { SetRequired } from 'type-fest';
+import type { JsonObject, SetRequired } from 'type-fest';
 
 type ConfigOpts = {
   /**
@@ -195,5 +195,55 @@ export class PineconeClient<Metadata extends RootMetadata> {
         })
         .json();
     }
+  }
+
+  /**
+   * This operation creates a Pinecone index. You can use it to specify the measure of similarity, the dimension of vectors to be stored in the index, the numbers of shards and replicas to use, and more.
+   * @param params.environment The environment to create the index in. Eg: us-east-1-aws or us-west1-gcp
+   * @param params.name The name of the index to be created. The maximum length is 45 characters.
+   * @param params.dimension The dimensions of the vectors to be inserted in the index
+   * @param params.metric The distance metric to be used for similarity search. You can use 'euclidean', 'cosine', or 'dotproduct'.
+   * @param params.pods The number of pods for the index to use,including replicas.
+   * @param params.replicas The number of replicas. Replicas duplicate your index. They provide higher availability and throughput.
+   * @param params.shards The number of shards to be used in the index.
+   * @param params.pod_type The type of pod to use. One of s1, p1, or p2 appended with . and one of x1, x2, x4, or x8.
+   * @param params.metadata_config Configuration for the behavior of Pinecone's internal metadata index. By default, all metadata is indexed; when metadata_config is present, only specified metadata fields are indexed.
+   * @param params.source_collection The name of the collection to create an index from.
+   * @see https://docs.pinecone.io/reference/create_index
+   */
+  async createIndex(params: {
+    environment: string;
+    name: string;
+    dimension: number;
+    metric?: 'euclidean' | 'cosine' | 'dotproduct';
+    pods?: number;
+    replicas?: number;
+    shards?: number;
+    pod_type?: string;
+    metadata_config?: JsonObject;
+    source_collection?: string;
+  }): Promise<void> {
+    const { environment, ...rest } = params;
+    const indexApi = this.api.extend({
+      prefixUrl: `https://controller.${environment}.pinecone.io`,
+    });
+    await indexApi.post('databases', { json: rest });
+  }
+
+  /**
+   * This operation deletes an existing index.
+   * @param params.environment The environment the index is in. Eg: us-east-1-aws or us-west1-gcp
+   * @param params.name The name of the index to delete.
+   * @see https://docs.pinecone.io/reference/delete_index
+   */
+  async deleteIndex(params: {
+    environment: string;
+    name: string;
+  }): Promise<void> {
+    const { environment, name } = params;
+    const indexApi = this.api.extend({
+      prefixUrl: `https://controller.${environment}.pinecone.io`,
+    });
+    await indexApi.delete(`databases/${name}`);
   }
 }
