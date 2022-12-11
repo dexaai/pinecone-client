@@ -104,7 +104,7 @@ Both apiKey and baseUrl are optional and will be read from the following environ
 
 ## API
 
-The client supports all of the vector operations from the Pinecone API using the same method names and parameters.
+The client supports all of the vector operations from the Pinecone API using the same method names and parameters. It also supports creating and deleting indexes.
 
 For detailed documentation with links to the Pinecone docs, see [the source code](/src/pinecone-client.ts).
 
@@ -116,5 +116,7 @@ For detailed documentation with links to the Pinecone docs, see [the source code
 - `pinecone.query()`
 - `pinecone.update()`
 - `pinecone.upsert()`
+- `pinecone.createIndex()`
+- `pinecone.deleteIndex()`
 
 You can also find more example usage in the [e2e tests](/test/e2e-tests.ts).
