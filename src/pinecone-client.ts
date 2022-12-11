@@ -1,3 +1,4 @@
+import type { CustomFetchApi } from './fetch-api';
 import { createApiInstance } from './fetch-api';
 import { removeNullValues } from './utils';
 import type {
@@ -26,6 +27,12 @@ type ConfigOpts = {
    * @see https://www.pinecone.io/docs/namespaces/
    */
   namespace?: string;
+  /**
+   * A custom implementation of the Fetch API.
+   * Use this to support environments that don't have a global fetch implementation.
+   * @see https://github.com/sindresorhus/ky#fetch
+   */
+  fetch?: CustomFetchApi;
 };
 
 /**
@@ -56,6 +63,7 @@ export class PineconeClient<Metadata extends RootMetadata> {
     this.api = createApiInstance({
       apiKey: this.apiKey,
       baseUrl: this.baseUrl,
+      fetch: config.fetch,
     });
   }
 

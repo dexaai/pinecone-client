@@ -1,10 +1,18 @@
 import ky from 'ky';
+import type { Options } from 'ky';
+
+export type CustomFetchApi = Options['fetch'];
 
 /**
  * Create an instance of Ky with options shared by all requests.
  */
-export function createApiInstance(opts: { apiKey: string; baseUrl: string }) {
+export function createApiInstance(opts: {
+  apiKey: string;
+  baseUrl: string;
+  fetch?: CustomFetchApi;
+}) {
   return ky.extend({
+    fetch: opts.fetch,
     prefixUrl: opts.baseUrl,
     headers: {
       'Api-Key': opts.apiKey,

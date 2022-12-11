@@ -37,8 +37,16 @@ export async function e2eTests(pinecone: PineconeClient<Metadata>) {
   const r1 = await pinecone.fetch({ ids: ['1', '2'] });
   assert(r1.namespace === NAMESPACE, 'namespace should match');
   assert(Object.keys(r1.vectors).length === 2, 'Expected 2 vectors');
-  assert.deepStrictEqual(r1.vectors['1'], vectors[1], 'Vector 1 should match');
-  assert.deepStrictEqual(r1.vectors['2'], vectors[2], 'Vector 2 should match');
+  assert.deepStrictEqual(
+    r1.vectors['1'],
+    { ...vectors[1], sparseValues: {} },
+    'Vector 1 should match'
+  );
+  assert.deepStrictEqual(
+    r1.vectors['2'],
+    { ...vectors[2], sparseValues: {} },
+    'Vector 2 should match'
+  );
 
   // Query by vector
   const r2 = await pinecone.query({
@@ -206,6 +214,7 @@ export async function e2eTests(pinecone: PineconeClient<Metadata>) {
     {
       id: '3',
       values: [3, 3, 3, 3],
+      sparseValues: {},
       metadata: { count: 3, approved: false },
     },
     'Upserted vector is correct'

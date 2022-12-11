@@ -68,17 +68,20 @@ const pinecone = new PineconeClient({ /* ... */ });
 
 ### Without Fetch
 
-For runtimes like Node.js v17 and below that don't support fetch, you will need to polyfill fetch. I suggest using [cross-fetch](https://github.com/lquixada/cross-fetch).
+For runtimes like Node.js v17 and below that don't support fetch, you need to provide a fetch implementation. I suggest using [cross-fetch](https://github.com/lquixada/cross-fetch).
 
 ```sh
 npm install pinecone-client cross-fetch
 ```
 
 ```ts
-import 'cross-fetch/polyfill';
+import fetch from 'cross-fetch';
 import { PineconeClient } from 'pinecone-client';
 
-const pinecone = new PineconeClient({ /* ... */ });
+const pinecone = new PineconeClient({
+  fetch,
+  /* ... */
+});
 ```
 
 ## Setup
