@@ -93,7 +93,7 @@ type Metadata = {};
 
 const pinecone = new PineconeClient<Metadata>({
   apiKey: '<your api key>',
-  baseUrl: '<your index url>'
+  baseUrl: '<your index url>',
   namespace: 'testing',
 });
 ```
