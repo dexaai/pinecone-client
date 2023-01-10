@@ -16,7 +16,7 @@ export function createApiInstance(opts: { apiKey: string; baseUrl: string }) {
           const { response } = error;
           if (response && response.body) {
             try {
-              const body = await response.json();
+              const body = await response.clone().json();
               if (body.message) {
                 return new PineconeError(body.message, {
                   code: body.code,
