@@ -57,6 +57,7 @@ export type Vector<Metadata extends RootMetadata> = {
 export type QueryParams<Metadata extends RootMetadata> = RequireExactlyOne<
   {
     topK: number;
+    minScore?: number;
     filter?: Filter<Metadata>;
     includeMetadata?: boolean;
     includeValues?: boolean;

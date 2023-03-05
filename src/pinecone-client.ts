@@ -125,6 +125,7 @@ export class PineconeClient<Metadata extends RootMetadata> {
    * retrieves the ids of the most similar items in a namespace, along with
    * their similarity scores.
    * @param params.topK The number of results to return.
+   * @param params.minScore Filter out results with a score below this value.
    * @param params.filter Metadata filter to apply to the query.
    * @param params.id The id of the vector in the index to be used as the query vector.
    * @param params.vector A dense vector to be used as the query vector.
@@ -138,9 +139,10 @@ export class PineconeClient<Metadata extends RootMetadata> {
   async query<Params extends QueryParams<Metadata>>(
     params: Params
   ): Promise<QueryResults<Metadata, Params>> {
+    const { hybridAlpha, minScore, ...restParams } = params;
     // Apply hybrid scoring if requested.
-    if (params.hybridAlpha != undefined) {
-      const { hybridAlpha, vector, sparseVector } = params;
+    if (hybridAlpha != undefined) {
+      const { vector, sparseVector } = params;
       if (!vector || !sparseVector) {
         throw new Error(
           `Hybrid queries require vector and sparseVector parameters.`
@@ -150,14 +152,19 @@ export class PineconeClient<Metadata extends RootMetadata> {
       params.vector = weighted.values;
       params.sparseVector = weighted.sparseValues;
     }
-    return this.api
+    const results: QueryResults<Metadata, Params> = await this.api
       .post('query', {
         json: {
           namespace: this.namespace,
-          ...removeNullValues(params),
+          ...removeNullValues(restParams),
         },
       })
       .json();
+    // Filter out results below the minimum score.
+    if (typeof minScore === 'number') {
+      results.matches = results.matches.filter((r) => r.score >= minScore);
+    }
+    return results;
   }
 
   /**
