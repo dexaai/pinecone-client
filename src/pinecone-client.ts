@@ -6,6 +6,7 @@ import type {
   Filter,
   Vector,
   QueryResults,
+  SparseValues,
 } from './types';
 import type { JsonObject, SetRequired } from 'type-fest';
 
@@ -126,7 +127,8 @@ export class PineconeClient<Metadata extends RootMetadata> {
    * @param params.topK The number of results to return.
    * @param params.filter Metadata filter to apply to the query.
    * @param params.id The id of the vector in the index to be used as the query vector.
-   * @param params.vector A vector to be used as the query vector.
+   * @param params.vector A dense vector to be used as the query vector.
+   * @param params.sparseVector A sparse vector to be used as the query vector.
    * @param params.includeMetadata Whether to include metadata in the results.
    * @param params.includeValues Whether to include vector values in the results.
    * @note One of `vector` or `id` is required.
@@ -151,13 +153,15 @@ export class PineconeClient<Metadata extends RootMetadata> {
    * is included, the values of the fields specified in it will be added
    * or overwrite the previous value.
    * @param params.id The id of the vector to update.
-   * @param params.values The new vector values.
+   * @param params.values The new dense vector values.
+   * @param params.sparseValues The new sparse vector values.
    * @param params.setMetadata Metadata to set for the vector.
    * @see https://docs.pinecone.io/reference/update
    */
   async update(params: {
     id: string;
     values?: number[];
+    sparseValues?: SparseValues;
     setMetadata?: Metadata;
   }): Promise<void> {
     return this.api

@@ -18,11 +18,19 @@ export async function e2eTests(pinecone: PineconeClient<Metadata>) {
     1: {
       id: '1',
       values: [1, 1, 1, 1],
+      sparseValues: {
+        indices: [0, 10, 20, 30],
+        values: [1.1, 1.1, 1.1, 1.1],
+      },
       metadata: { count: 1, tags: ['a', 'b'], approved: true },
     },
     2: {
       id: '2',
       values: [2, 2, 2, 2],
+      sparseValues: {
+        indices: [1, 11, 21, 31],
+        values: [1.2, 1.2, 1.2, 1.2],
+      },
       metadata: { count: 2, tags: ['b', 'c'], approved: false },
     },
   };
@@ -52,6 +60,10 @@ export async function e2eTests(pinecone: PineconeClient<Metadata>) {
   const r2 = await pinecone.query({
     topK: 2,
     vector: [3, 3, 3, 3],
+    sparseVector: {
+      indices: [2, 12, 22, 32],
+      values: [1.3, 1.3, 1.3, 1.3],
+    },
   });
   assert(r2.namespace === NAMESPACE, 'namespace should match');
   // @ts-expect-error
@@ -113,6 +125,11 @@ export async function e2eTests(pinecone: PineconeClient<Metadata>) {
   const v2 = r6.matches.find((v) => v.id === '1');
   assert(v2?.id === '1', 'Expected id to be 1');
   assert.deepStrictEqual(v2.values, vectors[1].values, 'Values should match');
+  assert.deepStrictEqual(
+    v2.sparseValues,
+    vectors[1].sparseValues,
+    'Sparse values should match'
+  );
 
   // Query by vector id with vector values and metadata
   const r7 = await pinecone.query({
@@ -125,6 +142,11 @@ export async function e2eTests(pinecone: PineconeClient<Metadata>) {
   assert(v3?.id === '1', 'Expected id to be 1');
   assert.deepStrictEqual(v3.values, vectors[1].values, 'Values should match');
   assert.deepStrictEqual(
+    v3.sparseValues,
+    vectors[1].sparseValues,
+    'Sparse values should match'
+  );
+  assert.deepStrictEqual(
     v3?.metadata,
     vectors[1].metadata,
     'Metadata should match'
@@ -134,6 +156,10 @@ export async function e2eTests(pinecone: PineconeClient<Metadata>) {
   const r8 = await pinecone.query({
     topK: 2,
     vector: [3, 3, 3, 3],
+    sparseVector: {
+      indices: [2, 12, 22, 32],
+      values: [1.3, 1.3, 1.3, 1.3],
+    },
     filter: { count: 1 },
   });
   assert(r8.matches.length === 1, 'Expected 1 matches');
@@ -142,6 +168,10 @@ export async function e2eTests(pinecone: PineconeClient<Metadata>) {
   const r9 = await pinecone.query({
     topK: 2,
     vector: [3, 3, 3, 3],
+    sparseVector: {
+      indices: [2, 12, 22, 32],
+      values: [1.3, 1.3, 1.3, 1.3],
+    },
     filter: {
       count: { $gte: 1 },
       tags: { $in: ['a'] },
@@ -153,6 +183,10 @@ export async function e2eTests(pinecone: PineconeClient<Metadata>) {
   const r10 = await pinecone.query({
     topK: 2,
     vector: [3, 3, 3, 3],
+    sparseVector: {
+      indices: [2, 12, 22, 32],
+      values: [1.3, 1.3, 1.3, 1.3],
+    },
     filter: {
       count: { $lte: 1 },
       tags: null,
@@ -173,6 +207,10 @@ export async function e2eTests(pinecone: PineconeClient<Metadata>) {
   await pinecone.update({
     id: '1',
     values: [11, 11, 11, 11],
+    sparseValues: {
+      indices: [2, 12, 22, 32],
+      values: [1.3, 1.3, 1.3, 1.3],
+    },
   });
   const r12 = await pinecone.fetch({ ids: ['1'] });
   assert.deepStrictEqual(
@@ -204,6 +242,10 @@ export async function e2eTests(pinecone: PineconeClient<Metadata>) {
       {
         id: '3',
         values: [3, 3, 3, 3],
+        sparseValues: {
+          indices: [2, 12, 22, 32],
+          values: [3, 3, 3, 3],
+        },
         metadata: { count: 3, tags: null, approved: false },
       },
     ],
@@ -214,6 +256,10 @@ export async function e2eTests(pinecone: PineconeClient<Metadata>) {
     {
       id: '3',
       values: [3, 3, 3, 3],
+      sparseValues: {
+        indices: [2, 12, 22, 32],
+        values: [3, 3, 3, 3],
+      },
       metadata: { count: 3, approved: false },
     },
     'Upserted vector is correct'
@@ -224,6 +270,10 @@ export async function e2eTests(pinecone: PineconeClient<Metadata>) {
   const r15 = await pinecone.query({
     topK: 3,
     vector: [3, 3, 3, 3],
+    sparseValues: {
+      indices: [2, 12, 22, 32],
+      values: [3, 3, 3, 3],
+    },
   });
   assert(r15.matches.length === 2, 'Expected 2 matches');
   const deletedVector = r15.matches.find((v) => v.id === '1');

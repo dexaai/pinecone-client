@@ -34,11 +34,20 @@ export type Filter<Metadata extends RootMetadata> = {
 };
 
 /**
+ * Sparse vector data. Represented as a list of indices and a list of corresponded values, which must be the same length.
+ */
+export type SparseValues = {
+  indices: number[];
+  values: number[];
+};
+
+/**
  * The base vector object with strongly typed metadata.
  */
 export type Vector<Metadata extends RootMetadata> = {
   id: string;
   values: number[];
+  sparseValues?: SparseValues;
   metadata?: Metadata;
 };
 
@@ -52,6 +61,7 @@ export type QueryParams<Metadata extends RootMetadata> = RequireExactlyOne<
     includeMetadata?: boolean;
     includeValues?: boolean;
     vector?: number[];
+    sparseVector?: SparseValues;
     id?: string;
   },
   // Queries must have either a vector or an id and cannot have both.
@@ -76,7 +86,7 @@ export type QueryResultsBase = {
  */
 export type QueryResultsValues = {
   namespace: string;
-  matches: (ScoredVector & { values: number[] })[];
+  matches: (ScoredVector & { values: number[]; sparseValues?: SparseValues })[];
 };
 
 /**
@@ -92,7 +102,11 @@ export type QueryResultsMetadata<Metadata extends RootMetadata> = {
  */
 export type QueryResultsAll<Metadata extends RootMetadata> = {
   namespace: string;
-  matches: (ScoredVector & { metadata: Metadata; values: number[] })[];
+  matches: (ScoredVector & {
+    metadata: Metadata;
+    values: number[];
+    sparseValues?: SparseValues;
+  })[];
 };
 
 /**
