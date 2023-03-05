@@ -6,6 +6,7 @@ import ky from 'ky';
 export function createApiInstance(opts: { apiKey: string; baseUrl: string }) {
   return ky.extend({
     prefixUrl: opts.baseUrl,
+    timeout: 30 * 1000,
     headers: {
       'Api-Key': opts.apiKey,
     },
