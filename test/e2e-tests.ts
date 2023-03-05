@@ -39,12 +39,12 @@ export async function e2eTests(pinecone: PineconeClient<Metadata>) {
   assert(Object.keys(r1.vectors).length === 2, 'Expected 2 vectors');
   assert.deepStrictEqual(
     r1.vectors['1'],
-    { ...vectors[1], sparseValues: {} },
+    { ...vectors[1] },
     'Vector 1 should match'
   );
   assert.deepStrictEqual(
     r1.vectors['2'],
-    { ...vectors[2], sparseValues: {} },
+    { ...vectors[2] },
     'Vector 2 should match'
   );
 
@@ -214,7 +214,6 @@ export async function e2eTests(pinecone: PineconeClient<Metadata>) {
     {
       id: '3',
       values: [3, 3, 3, 3],
-      sparseValues: {},
       metadata: { count: 3, approved: false },
     },
     'Upserted vector is correct'
