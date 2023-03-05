@@ -34,11 +34,20 @@ export type Filter<Metadata extends RootMetadata> = {
 };
 
 /**
+ * Sparse vector data. Represented as a list of indices and a list of corresponded values, which must be the same length.
+ */
+export type SparseValues = {
+  indices: number[];
+  values: number[];
+};
+
+/**
  * The base vector object with strongly typed metadata.
  */
 export type Vector<Metadata extends RootMetadata> = {
   id: string;
   values: number[];
+  sparseValues?: SparseValues;
   metadata?: Metadata;
 };
 
@@ -48,10 +57,13 @@ export type Vector<Metadata extends RootMetadata> = {
 export type QueryParams<Metadata extends RootMetadata> = RequireExactlyOne<
   {
     topK: number;
+    minScore?: number;
     filter?: Filter<Metadata>;
     includeMetadata?: boolean;
     includeValues?: boolean;
     vector?: number[];
+    sparseVector?: SparseValues;
+    hybridAlpha?: number;
     id?: string;
   },
   // Queries must have either a vector or an id and cannot have both.
@@ -76,7 +88,9 @@ export type QueryResultsBase = {
  */
 export type QueryResultsValues = {
   namespace: string;
-  matches: (ScoredVector & { values: number[] })[];
+  matches: Prettify<
+    ScoredVector & { values: number[]; sparseValues?: SparseValues }
+  >[];
 };
 
 /**
@@ -84,7 +98,7 @@ export type QueryResultsValues = {
  */
 export type QueryResultsMetadata<Metadata extends RootMetadata> = {
   namespace: string;
-  matches: (ScoredVector & { metadata: Metadata })[];
+  matches: Prettify<ScoredVector & { metadata: Metadata }>[];
 };
 
 /**
@@ -92,7 +106,13 @@ export type QueryResultsMetadata<Metadata extends RootMetadata> = {
  */
 export type QueryResultsAll<Metadata extends RootMetadata> = {
   namespace: string;
-  matches: (ScoredVector & { metadata: Metadata; values: number[] })[];
+  matches: Prettify<
+    ScoredVector & {
+      metadata: Metadata;
+      values: number[];
+      sparseValues?: SparseValues;
+    }
+  >[];
 };
 
 /**
@@ -117,3 +137,8 @@ export type NoNullParams<Metadata extends RootMetadata> = {
   metadata?: Metadata;
   setMetadata?: Metadata;
 };
+
+/** Helper type to expand complex types into simple previews. */
+type Prettify<T> = {
+  [K in keyof T]: T[K];
+} & {};

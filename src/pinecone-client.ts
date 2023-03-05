@@ -6,6 +6,7 @@ import type {
   Filter,
   Vector,
   QueryResults,
+  SparseValues,
 } from './types';
 import type { JsonObject, SetRequired } from 'type-fest';
 
@@ -124,9 +125,12 @@ export class PineconeClient<Metadata extends RootMetadata> {
    * retrieves the ids of the most similar items in a namespace, along with
    * their similarity scores.
    * @param params.topK The number of results to return.
+   * @param params.minScore Filter out results with a score below this value.
    * @param params.filter Metadata filter to apply to the query.
    * @param params.id The id of the vector in the index to be used as the query vector.
-   * @param params.vector A vector to be used as the query vector.
+   * @param params.vector A dense vector to be used as the query vector.
+   * @param params.sparseVector A sparse vector to be used as the query vector.
+   * @param params.hybridAlpha Dense vs sparse weighting. 0.0 is all sparse, 1.0 is all dense.
    * @param params.includeMetadata Whether to include metadata in the results.
    * @param params.includeValues Whether to include vector values in the results.
    * @note One of `vector` or `id` is required.
@@ -135,14 +139,32 @@ export class PineconeClient<Metadata extends RootMetadata> {
   async query<Params extends QueryParams<Metadata>>(
     params: Params
   ): Promise<QueryResults<Metadata, Params>> {
-    return this.api
+    const { hybridAlpha, minScore, ...restParams } = params;
+    // Apply hybrid scoring if requested.
+    if (hybridAlpha != undefined) {
+      const { vector, sparseVector } = params;
+      if (!vector || !sparseVector) {
+        throw new Error(
+          `Hybrid queries require vector and sparseVector parameters.`
+        );
+      }
+      const weighted = hybridScoreNorm(vector, sparseVector, hybridAlpha);
+      params.vector = weighted.values;
+      params.sparseVector = weighted.sparseValues;
+    }
+    const results: QueryResults<Metadata, Params> = await this.api
       .post('query', {
         json: {
           namespace: this.namespace,
-          ...removeNullValues(params),
+          ...removeNullValues(restParams),
         },
       })
       .json();
+    // Filter out results below the minimum score.
+    if (typeof minScore === 'number') {
+      results.matches = results.matches.filter((r) => r.score >= minScore);
+    }
+    return results;
   }
 
   /**
@@ -151,13 +173,15 @@ export class PineconeClient<Metadata extends RootMetadata> {
    * is included, the values of the fields specified in it will be added
    * or overwrite the previous value.
    * @param params.id The id of the vector to update.
-   * @param params.values The new vector values.
+   * @param params.values The new dense vector values.
+   * @param params.sparseValues The new sparse vector values.
    * @param params.setMetadata Metadata to set for the vector.
    * @see https://docs.pinecone.io/reference/update
    */
   async update(params: {
     id: string;
     values?: number[];
+    sparseValues?: SparseValues;
     setMetadata?: Metadata;
   }): Promise<void> {
     return this.api
@@ -247,4 +271,27 @@ export class PineconeClient<Metadata extends RootMetadata> {
     });
     await indexApi.delete(`databases/${name}`);
   }
+}
+
+/**
+ * Hybrid score using a convex combination: alpha * dense + (1 - alpha) * sparse
+ * @see: https://docs.pinecone.io/docs/hybrid-search#sparse-dense-queries-do-not-support-explicit-weighting
+ */
+function hybridScoreNorm(
+  dense: number[],
+  sparse: SparseValues,
+  alpha: number
+): {
+  values: number[];
+  sparseValues: SparseValues;
+} {
+  if (alpha < 0 || alpha > 1) {
+    throw new Error('Alpha must be between 0 and 1');
+  }
+  const sparseValues: SparseValues = {
+    indices: sparse.indices,
+    values: sparse.values.map((v) => v * (1 - alpha)),
+  };
+  const values: number[] = dense.map((v) => v * alpha);
+  return { values, sparseValues };
 }
