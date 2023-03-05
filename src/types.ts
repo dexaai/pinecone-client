@@ -62,6 +62,7 @@ export type QueryParams<Metadata extends RootMetadata> = RequireExactlyOne<
     includeValues?: boolean;
     vector?: number[];
     sparseVector?: SparseValues;
+    hybridAlpha?: number;
     id?: string;
   },
   // Queries must have either a vector or an id and cannot have both.

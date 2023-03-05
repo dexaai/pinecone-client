@@ -129,6 +129,7 @@ export class PineconeClient<Metadata extends RootMetadata> {
    * @param params.id The id of the vector in the index to be used as the query vector.
    * @param params.vector A dense vector to be used as the query vector.
    * @param params.sparseVector A sparse vector to be used as the query vector.
+   * @param params.hybridAlpha Dense vs sparse weighting. 0.0 is all sparse, 1.0 is all dense.
    * @param params.includeMetadata Whether to include metadata in the results.
    * @param params.includeValues Whether to include vector values in the results.
    * @note One of `vector` or `id` is required.
@@ -137,6 +138,18 @@ export class PineconeClient<Metadata extends RootMetadata> {
   async query<Params extends QueryParams<Metadata>>(
     params: Params
   ): Promise<QueryResults<Metadata, Params>> {
+    // Apply hybrid scoring if requested.
+    if (params.hybridAlpha != undefined) {
+      const { hybridAlpha, vector, sparseVector } = params;
+      if (!vector || !sparseVector) {
+        throw new Error(
+          `Hybrid queries require vector and sparseVector parameters.`
+        );
+      }
+      const weighted = hybridScoreNorm(vector, sparseVector, hybridAlpha);
+      params.vector = weighted.values;
+      params.sparseVector = weighted.sparseValues;
+    }
     return this.api
       .post('query', {
         json: {
@@ -251,4 +264,27 @@ export class PineconeClient<Metadata extends RootMetadata> {
     });
     await indexApi.delete(`databases/${name}`);
   }
+}
+
+/**
+ * Hybrid score using a convex combination: alpha * dense + (1 - alpha) * sparse
+ * @see: https://docs.pinecone.io/docs/hybrid-search#sparse-dense-queries-do-not-support-explicit-weighting
+ */
+function hybridScoreNorm(
+  dense: number[],
+  sparse: SparseValues,
+  alpha: number
+): {
+  values: number[];
+  sparseValues: SparseValues;
+} {
+  if (alpha < 0 || alpha > 1) {
+    throw new Error('Alpha must be between 0 and 1');
+  }
+  const sparseValues: SparseValues = {
+    indices: sparse.indices,
+    values: sparse.values.map((v) => v * (1 - alpha)),
+  };
+  const values: number[] = dense.map((v) => v * alpha);
+  return { values, sparseValues };
 }
