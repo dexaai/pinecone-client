@@ -4,6 +4,8 @@
 
 A fetch based client for the [Pinecone.io](https://www.pinecone.io/) vector database with excellent TypeScript support.
 
+Pinecone recently released a similar [client](https://github.com/pinecone-io/pinecone-ts-client). It's a great option if you aren't picky about fully typed metadata.
+
 ## Highlights
 
 - Support for all vector operation endpoints
