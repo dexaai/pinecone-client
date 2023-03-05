@@ -87,7 +87,9 @@ export type QueryResultsBase = {
  */
 export type QueryResultsValues = {
   namespace: string;
-  matches: (ScoredVector & { values: number[]; sparseValues?: SparseValues })[];
+  matches: Prettify<
+    ScoredVector & { values: number[]; sparseValues?: SparseValues }
+  >[];
 };
 
 /**
@@ -95,7 +97,7 @@ export type QueryResultsValues = {
  */
 export type QueryResultsMetadata<Metadata extends RootMetadata> = {
   namespace: string;
-  matches: (ScoredVector & { metadata: Metadata })[];
+  matches: Prettify<ScoredVector & { metadata: Metadata }>[];
 };
 
 /**
@@ -103,11 +105,13 @@ export type QueryResultsMetadata<Metadata extends RootMetadata> = {
  */
 export type QueryResultsAll<Metadata extends RootMetadata> = {
   namespace: string;
-  matches: (ScoredVector & {
-    metadata: Metadata;
-    values: number[];
-    sparseValues?: SparseValues;
-  })[];
+  matches: Prettify<
+    ScoredVector & {
+      metadata: Metadata;
+      values: number[];
+      sparseValues?: SparseValues;
+    }
+  >[];
 };
 
 /**
@@ -132,3 +136,8 @@ export type NoNullParams<Metadata extends RootMetadata> = {
   metadata?: Metadata;
   setMetadata?: Metadata;
 };
+
+/** Helper type to expand complex types into simple previews. */
+type Prettify<T> = {
+  [K in keyof T]: T[K];
+} & {};
