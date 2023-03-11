@@ -1,5 +1,11 @@
 # Pinecone.io Client
 
+### ⚠️ Unofficial Client ⚠️
+
+Pinecone.io now maintains an official typescript client, [pinecone-ts-client](https://github.com/pinecone-io/pinecone-ts-client)
+
+
+## Overview 
 [![Build Status](https://github.com/rileytomasek/pinecone-client/actions/workflows/main.yml/badge.svg)](https://github.com/rileytomasek/pinecone-client/actions/workflows/main.yml) [![npm version](https://img.shields.io/npm/v/pinecone-client.svg?color=0c0)](https://www.npmjs.com/package/pinecone-client)
 
 A fetch based client for the [Pinecone.io](https://www.pinecone.io/) vector database with excellent TypeScript support.
