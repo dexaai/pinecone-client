@@ -1,3 +1,5 @@
+# 👋 i love what you are building. wanna talk? -casey
+
 # Unofficial Pinecone.io Client
 
 [![Build Status](https://github.com/rileytomasek/pinecone-client/actions/workflows/main.yml/badge.svg)](https://github.com/rileytomasek/pinecone-client/actions/workflows/main.yml) [![npm version](https://img.shields.io/npm/v/pinecone-client.svg?color=0c0)](https://www.npmjs.com/package/pinecone-client)
