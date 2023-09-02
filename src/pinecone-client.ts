@@ -1,3 +1,4 @@
+import type { FetchOptions } from './fetch-api';
 import { createApiInstance } from './fetch-api';
 import { removeNullValues } from './utils';
 import type {
@@ -28,6 +29,10 @@ type ConfigOpts = {
    * @see https://www.pinecone.io/docs/namespaces/
    */
   namespace?: string;
+  /**
+   * Fetch options that will be added to all requests (like credentials, etc.).
+   */
+  fetchOptions?: FetchOptions;
 };
 
 /**
@@ -58,6 +63,7 @@ export class PineconeClient<Metadata extends RootMetadata> {
     this.api = createApiInstance({
       apiKey: this.apiKey,
       baseUrl: this.baseUrl,
+      fetchOptions: config.fetchOptions,
     });
   }
 

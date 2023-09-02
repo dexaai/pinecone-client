@@ -1,14 +1,25 @@
 import ky from 'ky';
+import type { Options } from 'ky';
+
+export interface FetchOptions extends Options {
+  credentials?: string;
+}
 
 /**
  * Create an instance of Ky with options shared by all requests.
  */
-export function createApiInstance(opts: { apiKey: string; baseUrl: string }) {
+export function createApiInstance(opts: {
+  apiKey: string;
+  baseUrl: string;
+  fetchOptions?: FetchOptions;
+}) {
+  const { headers, ...restFetchOptions } = opts.fetchOptions || {};
   return ky.extend({
     prefixUrl: opts.baseUrl,
     timeout: 30 * 1000,
     headers: {
       'Api-Key': opts.apiKey,
+      ...headers,
     },
     hooks: {
       beforeError: [
@@ -34,6 +45,7 @@ export function createApiInstance(opts: { apiKey: string; baseUrl: string }) {
         },
       ],
     },
+    ...restFetchOptions,
   });
 }
 
