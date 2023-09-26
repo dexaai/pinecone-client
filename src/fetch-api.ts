@@ -2,7 +2,7 @@ import ky from 'ky';
 import type { Options } from 'ky';
 
 export interface FetchOptions extends Options {
-  credentials?: string;
+  credentials?: RequestCredentials;
 }
 
 /**
