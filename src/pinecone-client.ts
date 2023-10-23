@@ -1,6 +1,6 @@
-import type { FetchOptions } from './fetch-api';
-import { createApiInstance } from './fetch-api';
-import { removeNullValues } from './utils';
+import type { FetchOptions } from './fetch-api.js';
+import { createApiInstance } from './fetch-api.js';
+import { removeNullValues } from './utils.js';
 import type {
   RootMetadata,
   QueryParams,
@@ -8,7 +8,7 @@ import type {
   Vector,
   QueryResults,
   SparseValues,
-} from './types';
+} from './types.js';
 import type { JsonObject, SetRequired } from 'type-fest';
 
 type ConfigOpts = {
@@ -45,16 +45,17 @@ export class PineconeClient<Metadata extends RootMetadata> {
   namespace?: string;
 
   constructor(config: ConfigOpts) {
-    const apiKey = config.apiKey || process.env.PINECONE_API_KEY;
-    const baseUrl = config.baseUrl || process.env.PINECONE_BASE_URL;
+    const process = globalThis.process || { env: {} };
+    const apiKey = config.apiKey || process.env['PINECONE_API_KEY'];
+    const baseUrl = config.baseUrl || process.env['PINECONE_BASE_URL'];
     if (!apiKey) {
       throw new Error(
-        'Missing Pinecone API key. Please provide one in the config or set the PINECONE_API_KEY environment variable.'
+        'Missing Pinecone API key. Please provide one in the config or set the PINECONE_API_KEY environment variable.',
       );
     }
     if (!baseUrl) {
       throw new Error(
-        'Missing Pinecone base URL. Please provide one in the config or set the PINECONE_BASE_URL environment variable.'
+        'Missing Pinecone base URL. Please provide one in the config or set the PINECONE_BASE_URL environment variable.',
       );
     }
     this.apiKey = apiKey;
@@ -143,7 +144,7 @@ export class PineconeClient<Metadata extends RootMetadata> {
    * @see https://docs.pinecone.io/reference/query
    */
   async query<Params extends QueryParams<Metadata>>(
-    params: Params
+    params: Params,
   ): Promise<QueryResults<Metadata, Params>> {
     const { hybridAlpha, minScore, ...restParams } = params;
     // Apply hybrid scoring if requested.
@@ -151,12 +152,12 @@ export class PineconeClient<Metadata extends RootMetadata> {
       const { vector, sparseVector } = params;
       if (!vector || !sparseVector) {
         throw new Error(
-          `Hybrid queries require vector and sparseVector parameters.`
+          `Hybrid queries require vector and sparseVector parameters.`,
         );
       }
       const weighted = hybridScoreNorm(vector, sparseVector, hybridAlpha);
-      params.vector = weighted.values;
-      params.sparseVector = weighted.sparseValues;
+      restParams.vector = weighted.values;
+      restParams.sparseVector = weighted.sparseValues;
     }
     const results: QueryResults<Metadata, Params> = await this.api
       .post('query', {
@@ -286,7 +287,7 @@ export class PineconeClient<Metadata extends RootMetadata> {
 function hybridScoreNorm(
   dense: number[],
   sparse: SparseValues,
-  alpha: number
+  alpha: number,
 ): {
   values: number[];
   sparseValues: SparseValues;
