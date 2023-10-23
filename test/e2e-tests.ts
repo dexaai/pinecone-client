@@ -1,5 +1,5 @@
 import { strict as assert } from 'node:assert';
-import type { PineconeClient } from '../src/index';
+import type { PineconeClient } from '../src/index.js';
 
 export const NAMESPACE = 'pinecone-fetch-e2e';
 
@@ -72,11 +72,11 @@ export async function e2eTests(pinecone: PineconeClient<Metadata>) {
   assert(r2.matches[0].values.length === 0, 'values should be []');
   assert(r2.matches.length === 2, 'Expected 2 matches');
   assert(
-    typeof r2.matches[0].score === 'number',
+    typeof r2.matches[0]?.score === 'number',
     'Expected score to be a number'
   );
   assert(
-    typeof r2.matches[1].score === 'number',
+    typeof r2.matches[1]?.score === 'number',
     'Expected score to be a number'
   );
 
@@ -214,7 +214,7 @@ export async function e2eTests(pinecone: PineconeClient<Metadata>) {
   });
   const r12 = await pinecone.fetch({ ids: ['1'] });
   assert.deepStrictEqual(
-    r12.vectors['1'].values,
+    r12.vectors['1']?.values,
     [11, 11, 11, 11],
     'Values should be updated'
   );
@@ -227,7 +227,7 @@ export async function e2eTests(pinecone: PineconeClient<Metadata>) {
   });
   const r13 = await pinecone.fetch({ ids: ['1'] });
   assert.deepStrictEqual(
-    r13.vectors['1'].metadata,
+    r13.vectors['1']?.metadata,
     {
       count: 11,
       tags: ['a', 'b'],

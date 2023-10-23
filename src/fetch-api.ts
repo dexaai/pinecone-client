@@ -1,8 +1,9 @@
 import ky from 'ky';
 import type { Options } from 'ky';
 
+type KyInstance = ReturnType<typeof ky.extend>;
 export interface FetchOptions extends Options {
-  credentials?: "include" | "omit" | "same-origin";
+  credentials?: 'include' | 'omit' | 'same-origin';
 }
 
 /**
@@ -12,7 +13,7 @@ export function createApiInstance(opts: {
   apiKey: string;
   baseUrl: string;
   fetchOptions?: FetchOptions;
-}) {
+}): KyInstance {
   const { headers, ...restFetchOptions } = opts.fetchOptions || {};
   return ky.extend({
     prefixUrl: opts.baseUrl,

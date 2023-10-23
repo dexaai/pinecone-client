@@ -1,6 +1,6 @@
-import type { FetchOptions } from './fetch-api';
-import { createApiInstance } from './fetch-api';
-import { removeNullValues } from './utils';
+import type { FetchOptions } from './fetch-api.js';
+import { createApiInstance } from './fetch-api.js';
+import { removeNullValues } from './utils.js';
 import type {
   RootMetadata,
   QueryParams,
@@ -8,7 +8,7 @@ import type {
   Vector,
   QueryResults,
   SparseValues,
-} from './types';
+} from './types.js';
 import type { JsonObject, SetRequired } from 'type-fest';
 
 type ConfigOpts = {
@@ -45,8 +45,9 @@ export class PineconeClient<Metadata extends RootMetadata> {
   namespace?: string;
 
   constructor(config: ConfigOpts) {
-    const apiKey = config.apiKey || process.env.PINECONE_API_KEY;
-    const baseUrl = config.baseUrl || process.env.PINECONE_BASE_URL;
+    const process = globalThis.process || { env: {} };
+    const apiKey = config.apiKey || process.env['PINECONE_API_KEY'];
+    const baseUrl = config.baseUrl || process.env['PINECONE_BASE_URL'];
     if (!apiKey) {
       throw new Error(
         'Missing Pinecone API key. Please provide one in the config or set the PINECONE_API_KEY environment variable.'
@@ -155,8 +156,8 @@ export class PineconeClient<Metadata extends RootMetadata> {
         );
       }
       const weighted = hybridScoreNorm(vector, sparseVector, hybridAlpha);
-      params.vector = weighted.values;
-      params.sparseVector = weighted.sparseValues;
+      restParams.vector = weighted.values;
+      restParams.sparseVector = weighted.sparseValues;
     }
     const results: QueryResults<Metadata, Params> = await this.api
       .post('query', {

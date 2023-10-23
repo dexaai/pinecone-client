@@ -1,4 +1,4 @@
-import type { NoNullParams, RootMetadata } from './types';
+import type { NoNullParams, RootMetadata } from './types.js';
 
 /**
  * Recursively remove keys with null values from an object.
