@@ -5,7 +5,7 @@ import type { NoNullParams, RootMetadata } from './types.js';
  * Also handles accepting undefined to prevent repeating this logic at each call site.
  */
 export function removeNullValuesFromObject<T extends {}>(
-  obj?: T
+  obj?: T,
 ): T | undefined {
   if (obj === undefined) return undefined;
   for (const key in obj) {
@@ -22,7 +22,7 @@ export function removeNullValuesFromObject<T extends {}>(
  */
 export function removeNullValues<
   Metadata extends RootMetadata,
-  T extends NoNullParams<Metadata>
+  T extends NoNullParams<Metadata>,
 >(obj: T | undefined): T | undefined {
   if (obj === undefined) return undefined;
   const { metadata, filter, setMetadata, ...rest } = obj;

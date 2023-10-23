@@ -64,7 +64,7 @@ export class PineconeError extends Error {
       code: number;
       details?: PineconeErrorDetail[];
       status: number;
-    }
+    },
   ) {
     if (opts.cause) {
       // @ts-ignore not sure why TS can't handle this

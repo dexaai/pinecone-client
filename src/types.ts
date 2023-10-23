@@ -120,7 +120,7 @@ export type QueryResultsAll<Metadata extends RootMetadata> = {
  */
 export type QueryResults<
   Metadata extends RootMetadata,
-  Params extends { includeMetadata?: boolean; includeValues?: boolean }
+  Params extends { includeMetadata?: boolean; includeValues?: boolean },
 > = Params extends { includeValues: true; includeMetadata: true }
   ? QueryResultsAll<Metadata>
   : Params extends { includeValues: true }

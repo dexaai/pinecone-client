@@ -50,12 +50,12 @@ export class PineconeClient<Metadata extends RootMetadata> {
     const baseUrl = config.baseUrl || process.env['PINECONE_BASE_URL'];
     if (!apiKey) {
       throw new Error(
-        'Missing Pinecone API key. Please provide one in the config or set the PINECONE_API_KEY environment variable.'
+        'Missing Pinecone API key. Please provide one in the config or set the PINECONE_API_KEY environment variable.',
       );
     }
     if (!baseUrl) {
       throw new Error(
-        'Missing Pinecone base URL. Please provide one in the config or set the PINECONE_BASE_URL environment variable.'
+        'Missing Pinecone base URL. Please provide one in the config or set the PINECONE_BASE_URL environment variable.',
       );
     }
     this.apiKey = apiKey;
@@ -144,7 +144,7 @@ export class PineconeClient<Metadata extends RootMetadata> {
    * @see https://docs.pinecone.io/reference/query
    */
   async query<Params extends QueryParams<Metadata>>(
-    params: Params
+    params: Params,
   ): Promise<QueryResults<Metadata, Params>> {
     const { hybridAlpha, minScore, ...restParams } = params;
     // Apply hybrid scoring if requested.
@@ -152,7 +152,7 @@ export class PineconeClient<Metadata extends RootMetadata> {
       const { vector, sparseVector } = params;
       if (!vector || !sparseVector) {
         throw new Error(
-          `Hybrid queries require vector and sparseVector parameters.`
+          `Hybrid queries require vector and sparseVector parameters.`,
         );
       }
       const weighted = hybridScoreNorm(vector, sparseVector, hybridAlpha);
@@ -287,7 +287,7 @@ export class PineconeClient<Metadata extends RootMetadata> {
 function hybridScoreNorm(
   dense: number[],
   sparse: SparseValues,
-  alpha: number
+  alpha: number,
 ): {
   values: number[];
   sparseValues: SparseValues;

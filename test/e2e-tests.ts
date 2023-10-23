@@ -48,12 +48,12 @@ export async function e2eTests(pinecone: PineconeClient<Metadata>) {
   assert.deepStrictEqual(
     r1.vectors['1'],
     { ...vectors[1] },
-    'Vector 1 should match'
+    'Vector 1 should match',
   );
   assert.deepStrictEqual(
     r1.vectors['2'],
     { ...vectors[2] },
-    'Vector 2 should match'
+    'Vector 2 should match',
   );
 
   // Query by vector
@@ -73,11 +73,11 @@ export async function e2eTests(pinecone: PineconeClient<Metadata>) {
   assert(r2.matches.length === 2, 'Expected 2 matches');
   assert(
     typeof r2.matches[0]?.score === 'number',
-    'Expected score to be a number'
+    'Expected score to be a number',
   );
   assert(
     typeof r2.matches[1]?.score === 'number',
-    'Expected score to be a number'
+    'Expected score to be a number',
   );
 
   // Query by vector id
@@ -111,7 +111,7 @@ export async function e2eTests(pinecone: PineconeClient<Metadata>) {
   assert.deepStrictEqual(
     v1?.metadata,
     vectors[1].metadata,
-    'Metadata should match'
+    'Metadata should match',
   );
 
   // Query by vector id with vector values
@@ -128,7 +128,7 @@ export async function e2eTests(pinecone: PineconeClient<Metadata>) {
   assert.deepStrictEqual(
     v2.sparseValues,
     vectors[1].sparseValues,
-    'Sparse values should match'
+    'Sparse values should match',
   );
 
   // Query by vector id with vector values and metadata
@@ -144,12 +144,12 @@ export async function e2eTests(pinecone: PineconeClient<Metadata>) {
   assert.deepStrictEqual(
     v3.sparseValues,
     vectors[1].sparseValues,
-    'Sparse values should match'
+    'Sparse values should match',
   );
   assert.deepStrictEqual(
     v3?.metadata,
     vectors[1].metadata,
-    'Metadata should match'
+    'Metadata should match',
   );
 
   // Query with filter: simple
@@ -200,7 +200,7 @@ export async function e2eTests(pinecone: PineconeClient<Metadata>) {
   assert.deepStrictEqual(
     r11.namespaces[NAMESPACE],
     { vectorCount: 2 },
-    'Expected namespace object to match'
+    'Expected namespace object to match',
   );
 
   // Update vector values
@@ -216,7 +216,7 @@ export async function e2eTests(pinecone: PineconeClient<Metadata>) {
   assert.deepStrictEqual(
     r12.vectors['1']?.values,
     [11, 11, 11, 11],
-    'Values should be updated'
+    'Values should be updated',
   );
 
   // Update vector metadata
@@ -233,7 +233,7 @@ export async function e2eTests(pinecone: PineconeClient<Metadata>) {
       tags: ['a', 'b'],
       approved: true,
     },
-    'Metadata should be udpated'
+    'Metadata should be udpated',
   );
 
   // Upsert with null metadata
@@ -262,7 +262,7 @@ export async function e2eTests(pinecone: PineconeClient<Metadata>) {
       },
       metadata: { count: 3, approved: false },
     },
-    'Upserted vector is correct'
+    'Upserted vector is correct',
   );
 
   // Delete a vector
