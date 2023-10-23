@@ -23,6 +23,8 @@
   },
   "scripts": {
     "build": "rm -rf dist && tsc --project tsconfig.dist.json",
+    "clean": "rm -rf dist node_modules",
+    "format": "prettier --write src test",
     "lint": "eslint src",
     "prepare": "yarn build",
     "prepublishOnly": "yarn lint && yarn typecheck",
@@ -33,17 +35,17 @@
   "license": "MIT",
   "private": false,
   "dependencies": {
-    "ky": "^0.33.1"
+    "ky": "^1.1.0"
   },
   "devDependencies": {
-    "@types/node": "^18.11.18",
-    "eslint": "^8.31.0",
-    "eslint-config-hckrs": "^0.0.3",
-    "np": "^7.6.3",
-    "prettier": "^2.8.1",
-    "tsx": "^3.12.1",
-    "type-fest": "^3.5.1",
-    "typescript": "^4.9.4"
+    "@types/node": "^20.8.7",
+    "eslint": "^8.52.0",
+    "eslint-config-hckrs": "^0.0.4",
+    "np": "^8.0.4",
+    "prettier": "^3.0.3",
+    "tsx": "^3.14.0",
+    "type-fest": "^4.5.0",
+    "typescript": "^5.2.2"
   },
   "publishConfig": {
     "registry": "https://registry.npmjs.org"
